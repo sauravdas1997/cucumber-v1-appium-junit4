@@ -1,0 +1,52 @@
+plugins {
+    id 'java'
+    id "com.browserstack.gradle-sdk" version "1.1.2"
+}
+
+group = 'com.browserstack'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation "info.cukes:cucumber-junit:1.2.4"
+    testImplementation "info.cukes:cucumber-core:1.2.4"
+    testImplementation "info.cukes:cucumber-java:1.2.4"
+    testImplementation "junit:junit:4.12"
+    implementation 'com.browserstack:browserstack-java-sdk:latest.release'
+    implementation group: 'org.seleniumhq.selenium', name: 'selenium-java', version: '3.141.59'
+    implementation group: 'io.appium', name: 'java-client', version: '7.6.0'
+    implementation group: 'commons-io', name: 'commons-io', version: '2.18.0'
+
+}
+
+def browserstackSDKArtifact = configurations.compileClasspath.resolvedConfiguration.resolvedArtifacts.find { it.name == 'browserstack-java-sdk' }
+
+task sampleTest(type: Test) {
+    useJUnit()
+    jvmArgs "-javaagent:${browserstackSDKArtifact.file}"
+    include '**/SampleTestRunner.class'
+    testLogging {
+        showStandardStreams = true // Display System.out and System.err
+    }
+}
+
+task localTest(type: Test) {
+    useJUnit()
+    jvmArgs "-javaagent:${browserstackSDKArtifact.file}"
+    include '**/LocalTestRunner.class'
+    testLogging {
+        showStandardStreams = true // Display System.out and System.err
+    }
+}
+
+task featureTest(type: Test) {
+    useJUnit()
+    jvmArgs "-javaagent:${browserstackSDKArtifact.file}"
+    include '**/FeatureTestRunner.class'
+    testLogging {
+        showStandardStreams = true // Display System.out and System.err
+    }
+}
